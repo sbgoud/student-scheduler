@@ -11,23 +11,22 @@ export default function Schedule({ username }) {
   const navigate = useNavigate();
 
   // Load saved data when page opens
-// src/components/Schedule.jsx
+// Replace the useEffect for fetching history
 useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(`/api/fetch-schedule?username=${username}`);
-      const savedData = await response.json();
-      setTasks(savedData);
+    const fetchHistory = async () => {
+      const response = await fetch(`/api/fetch-history?username=${username}`);
+      const historyData = await response.json();
+      setHistory(historyData);
     };
-    fetchData();
+    fetchHistory();
   }, [username]);
 
   // Save to Vercel Blob
   const saveSchedule = async () => {
-    await put(
-      `schedules/${username}.json`,
-      JSON.stringify(tasks),
-      { access: 'public' }
-    );
+    const date = new Date().toISOString().split('T')[0]; // e.g., "2024-05-25"
+    const blobName = `schedules/${username}-${date}.json`;
+  
+    await put(blobName, JSON.stringify(tasks), { access: 'public' });
     alert('Saved!');
   };
 
@@ -93,14 +92,31 @@ useEffect(() => {
       <button onClick={saveSchedule}>Save Schedule</button>
 
       <h3>Past Schedules</h3>
-      <div>
-        {history.map((entry, index) => (
-          <div key={index}>
-            <p>Date: {entry.date}</p>
-            <pre>{JSON.stringify(entry.tasks, null, 2)}</pre>
-          </div>
-        ))}
-      </div>
+<div>
+  {history.map((entry, index) => (
+    <div key={index} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px' }}>
+      <h4>📅 Date: {entry.date}</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Completed Time</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {entry.tasks.map((task) => (
+            <tr key={task.id}>
+              <td>{task.name}</td>
+              <td>{task.time || '❌ Not completed'}</td>
+              <td>{task.notes || '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ))}
+</div>
     </div>
   );
 }
