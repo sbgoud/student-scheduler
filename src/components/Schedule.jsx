@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { put, get } from '@vercel/blob';
+import { put } from '@vercel/blob';
 
 export default function Schedule({ username }) {
   const [tasks, setTasks] = useState([
@@ -11,13 +11,12 @@ export default function Schedule({ username }) {
   const navigate = useNavigate();
 
   // Load saved data when page opens
-  useEffect(() => {
+// src/components/Schedule.jsx
+useEffect(() => {
     const fetchData = async () => {
-      const blob = await get(`schedules/${username}.json`);
-      if (blob) {
-        const savedData = await blob.json();
-        setTasks(savedData);
-      }
+      const response = await fetch(`/api/fetch-schedule?username=${username}`);
+      const savedData = await response.json();
+      setTasks(savedData);
     };
     fetchData();
   }, [username]);
