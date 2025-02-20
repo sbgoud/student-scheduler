@@ -1,6 +1,7 @@
-import { put } from '@vercel/blob';
+// api/save-schedule.js
+const { put } = require('@vercel/blob');
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   const { username, tasks } = req.body;
   const date = new Date().toISOString().split('T')[0];
   const blobName = `schedules/${username}-${date}.json`;
@@ -14,4 +15,4 @@ export default async function handler(req, res) {
   } catch (error) {
     res.status(500).json({ error: 'Failed to save schedule' });
   }
-}
+};
