@@ -23,11 +23,18 @@ useEffect(() => {
 
   // Save to Vercel Blob
   const saveSchedule = async () => {
-    const date = new Date().toISOString().split('T')[0]; // e.g., "2024-05-25"
-    const blobName = `schedules/${username}-${date}.json`;
+    try {
+      const response = await fetch('/api/save-schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, tasks })
+      });
   
-    await put(blobName, JSON.stringify(tasks), { access: 'public' });
-    alert('Saved!');
+      if (!response.ok) throw new Error('Save failed');
+      alert('Saved successfully!');
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
   };
 
   // Logout
