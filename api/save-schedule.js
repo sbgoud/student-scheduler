@@ -1,5 +1,5 @@
 // api/save-schedule.js
-const { put } = require('@vercel/blob');
+import { put } from '@vercel/blob';
 
 module.exports = async (req, res) => {
   const { username, tasks } = req.body;
